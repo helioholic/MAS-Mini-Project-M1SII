@@ -28,8 +28,18 @@ public class AuctionLauncher {
                     runPart2();
                 case 3 ->
                     System.out.println("  [Part 3] Coming soon...");
-                case 4 ->
-                    System.out.println("  [Part 4] Coming soon...");
+                case 4 -> {
+                    try {
+                        ProcessBuilder pb = new ProcessBuilder("python", "../planning/part4/centralized_planning.py");
+                        pb.inheritIO();
+                        Process p = pb.start();
+                        p.waitFor();
+                    } catch (Exception e) {
+                        System.out.println("  [ERREUR] Python : " + e.getMessage());
+                    }
+                    pause(scanner);
+                    break;
+                }
                 case 0 -> {
                     System.out.println("  Goodbye!");
                     running = false;
@@ -129,7 +139,7 @@ public class AuctionLauncher {
 
             // Launch seller
             AgentController seller = container.createNewAgent(
-                    "Seller", "agents.SellerAgent", new Object[]{product});
+                    "Seller", "agents.SellerAgent", new Object[] { product });
             seller.start();
 
         } catch (StaleProxyException e) {
@@ -173,19 +183,19 @@ public class AuctionLauncher {
             // SellerA: expensive, high quality, cheap delivery
             AgentController sellerA = container1.createNewAgent(
                     "SellerA", "agents.SellerAgent2",
-                    new Object[]{600.0, 9.0, 20.0});
+                    new Object[] { 600.0, 9.0, 20.0 });
             sellerA.start();
 
             // SellerB: cheap, medium quality, expensive delivery
             AgentController sellerB = container2.createNewAgent(
                     "SellerB", "agents.SellerAgent2",
-                    new Object[]{400.0, 6.0, 50.0});
+                    new Object[] { 400.0, 6.0, 50.0 });
             sellerB.start();
 
             // SellerC: medium price, medium quality, medium delivery
             AgentController sellerC = container3.createNewAgent(
                     "SellerC", "agents.SellerAgent2",
-                    new Object[]{500.0, 7.0, 35.0});
+                    new Object[] { 500.0, 7.0, 35.0 });
             sellerC.start();
 
             Thread.sleep(1000); // wait for sellers to register
@@ -194,9 +204,9 @@ public class AuctionLauncher {
             AgentController mobileBuyer = mainContainer.createNewAgent(
                     "MobileBuyer",
                     "agents.MobileBuyerAgent",
-                    new Object[]{
-                        "SellerA,SellerB,SellerC", // seller names
-                        "Container1,Container2,Container3" // their containers
+                    new Object[] {
+                            "SellerA,SellerB,SellerC", // seller names
+                            "Container1,Container2,Container3" // their containers
                     });
             mobileBuyer.start();
 
@@ -220,6 +230,14 @@ public class AuctionLauncher {
         } catch (Exception e) {
             scanner.nextLine(); // flush bad input
             return -1;
+        }
+    }
+
+    static void pause(Scanner sc) {
+        System.out.print("  Press Enter to continue...");
+        try {
+            sc.nextLine();
+        } catch (Exception ignored) {
         }
     }
 }
