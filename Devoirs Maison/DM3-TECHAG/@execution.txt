@@ -1,0 +1,8 @@
+# 1. Aller dans le dossier
+cd wumpus_qlearning
+
+# 2. Activer l'environnement virtuel
+env\Scripts\activate
+
+# 3. Lancer
+python train.py
